@@ -1,3 +1,5 @@
 package com.tw.dbserver.db.execution
 
-interface Operator : Sequence<String>
+interface Operator : Sequence<Row>
+
+typealias Row = Array<Any>

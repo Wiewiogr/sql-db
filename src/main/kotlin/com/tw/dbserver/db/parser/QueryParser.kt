@@ -1,13 +1,13 @@
 package com.tw.dbserver.db.parser
 
-import com.tw.dbserver.db.ParsedQuery
+import com.tw.dbserver.db.SelectQuery
 
 class QueryParser {
 
-    fun parse(sqlQuery: String): ParsedQuery {
+    fun parse(sqlQuery: String): SelectQuery {
         // SELECT * FROM table
         val queryParts = sqlQuery.split(" ")
-        return ParsedQuery(
+        return SelectQuery(
                 listOf("*"),
                 queryParts[queryParts.size - 1]
         )

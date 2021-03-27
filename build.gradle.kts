@@ -21,6 +21,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava
+	implementation("org.lmdbjava:lmdbjava:0.8.1")
+
 }
 
 tasks.withType<KotlinCompile> {

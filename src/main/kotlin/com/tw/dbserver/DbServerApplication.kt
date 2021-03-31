@@ -6,6 +6,6 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class DbServerApplication
 
-fun main(args: Array<String>) {
-	runApplication<DbServerApplication>(*args)
-}
+//fun main(args: Array<String>) {
+//	runApplication<DbServerApplication>(*args)
+//}

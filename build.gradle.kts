@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	kotlin("jvm") version "1.4.31"
 	kotlin("plugin.spring") version "1.4.31"
+	antlr
 }
 
 group = "com.tw"
@@ -24,6 +25,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.lmdbjava/lmdbjava
 	implementation("org.lmdbjava:lmdbjava:0.8.1")
 
+	antlr("org.antlr:antlr4:4.9.2")
+	implementation("org.antlr:antlr4-runtime:4.9.2")
 }
 
 tasks.withType<KotlinCompile> {
@@ -35,4 +38,9 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.generateGrammarSource {
+	maxHeapSize = "64m"
+	arguments = arguments + listOf("-visitor", "-long-messages")
 }

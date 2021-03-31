@@ -26,11 +26,11 @@ class StorageManager {
                 .open(path)
 
         val db = getDbi("table")
-        putKeyValue(db, 1, 2, 12)
-        putKeyValue(db, 3, 4, 34)
-        putKeyValue(db, 5, 6, 56)
-        putKeyValue(db, 7, 8, 78)
-        putKeyValue(db, 9, 10, 910)
+        putKeyValue(db, 1, 12, 0, 10.0324f)
+        putKeyValue(db, 3, 34, 1, 12.40f)
+        putKeyValue(db, 5, 56, 1, 0.213f)
+        putKeyValue(db, 7, 78, 0, 5.0f)
+        putKeyValue(db, 9, 910, 1, 98.0f)
     }
 
     fun scan(table: String) = sequence<KeyValueRecord> {
@@ -50,11 +50,15 @@ class StorageManager {
         }
     }
 
-    private fun putKeyValue(db: Dbi<ByteBuffer>, key: Int, value: Int, value2: Int) {
+    private fun putKeyValue(db: Dbi<ByteBuffer>,
+                            key: Int,
+                            intValue: Int,
+                            booleanValue: Byte,
+                            floatValue: Float) {
         val keyBuffer: ByteBuffer = allocateDirect(4)
-        val valBuffer: ByteBuffer = allocateDirect(8)
+        val valBuffer: ByteBuffer = allocateDirect(9)
         keyBuffer.putInt(key).flip()
-        valBuffer.putInt(value).putInt(value2).flip()
+        valBuffer.putInt(intValue).put(booleanValue).putFloat(floatValue).flip()
 
         println(valBuffer.remaining())
         db.put(keyBuffer, valBuffer)

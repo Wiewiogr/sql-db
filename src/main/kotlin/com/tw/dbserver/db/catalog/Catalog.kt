@@ -1,5 +1,7 @@
 package com.tw.dbserver.db.catalog
 
+import com.tw.dbserver.db.serialization.BooleanSerializer
+import com.tw.dbserver.db.serialization.FloatSerializer
 import com.tw.dbserver.db.serialization.IntegerSerializer
 import com.tw.dbserver.db.serialization.Serializer
 
@@ -22,5 +24,7 @@ data class TableInfo(val tableName: String,
 data class Column(val name: String, val type: ColumnType)
 
 enum class ColumnType(val serializer: Serializer<out Any>) {
-    INTEGER(IntegerSerializer())
+    INTEGER(IntegerSerializer()),
+    BOOLEAN(BooleanSerializer()),
+    FLOAT(FloatSerializer()),
 }

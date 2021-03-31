@@ -26,8 +26,10 @@ fun main() {
             "table",
             Column("key", ColumnType.INTEGER),
             listOf(
-                    Column("col1", ColumnType.INTEGER),
-                    Column("col2", ColumnType.INTEGER)
+                    Column("colInteger", ColumnType.INTEGER),
+                    Column("colBoolean", ColumnType.BOOLEAN),
+                    Column("colFloat", ColumnType.FLOAT),
+
             )
     )
     catalog.putTableInfo("table", tableInfo)
@@ -40,7 +42,7 @@ fun main() {
     )
     val result = queryOrchestrator.run("SELECT * FROM table")
 
-    result.forEach {row ->
+    result.forEach { row ->
         row.forEach { value -> print("$value, ") }
         println()
     }

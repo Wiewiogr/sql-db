@@ -1,6 +1,6 @@
-package com.tw.dbserver.db
+package com.tw.dbserver.db.parser.nodes
 
-data class SelectQuery(
+data class SelectNode(
         val projectionsSet: List<String>,
         val from: String
 )

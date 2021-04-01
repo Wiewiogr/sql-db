@@ -1,28 +1,70 @@
 grammar Sql;
-statement:       selectStatement;
+
+statement
+  : selectStatement
+  | insertStatement
+  ;
+
 selectStatement: SELECT resultColumn (',' resultColumn)* FROM from;
+insertStatement: INSERT INTO table VALUES '(' value (',' value )* ')';
 
 resultColumn
   : anyName
   | ASTERISK
   ;
 from: anyName;
+table: anyName;
+
+value
+  : NUMERIC_LITERAL
+  | STRING_LITERAL
+  | BOOLEAN_LITERAL
+  ;
 
 anyName
- : IDENTIFIER
- | '(' anyName ')'
- ;
+  : IDENTIFIER
+  | '(' anyName ')'
+  ;
 
 ASTERISK: '*';
 
+BOOLEAN_LITERAL
+  : TRUE
+  | FALSE
+  ;
+
+TRUE: T R U E;
+FALSE: F A L S E;
 SELECT: S E L E C T;
 FROM: F R O M;
+INSERT: I N S E R T;
+INTO: I N T O;
+VALUES: V A L U E S;
 
 IDENTIFIER
- : [a-zA-Z_] [a-zA-Z_0-9]*
- ;
+  : [a-zA-Z_] [a-zA-Z_0-9]*
+  ;
+
+STRING_LITERAL
+  : '\'' ( ~'\'' | '\'\'')* '\''
+  ;
+
+NUMERIC_LITERAL
+  : INTEGER_LITERAL
+  | DECIMAL_LITERAL
+  ;
+
+INTEGER_LITERAL
+  : DIGIT+
+  ;
+
+DECIMAL_LITERAL
+  : DIGIT+ '.' DIGIT*
+  ;
 
 WHITESPACES : [ \t\r\n]+ -> skip ;
+
+fragment DIGIT: [0-9];
 
 fragment A : [aA];
 fragment B : [bB];

@@ -20,12 +20,7 @@ class ScanOperator(private val data: Sequence<KeyValueRecord>,
                         val read = keyColumn.type.serializer.read(key)
                         read
                     } else {
-                        println(value.capacity())
-                        try {
-                            columns[it - 1].type.serializer.read(value)
-                        } catch (e: Exception) {
-                            1
-                        }
+                        columns[it - 1].type.serializer.read(value)
                     }
                 }
 

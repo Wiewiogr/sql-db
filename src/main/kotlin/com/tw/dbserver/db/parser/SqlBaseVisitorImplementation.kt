@@ -2,57 +2,57 @@ package com.tw.dbserver.db.parser
 
 import SqlBaseVisitor
 import SqlParser
-import com.tw.dbserver.db.parser.nodes.InsertNode
-import com.tw.dbserver.db.parser.nodes.SelectNode
+import com.tw.dbserver.db.parser.ast.*
 
-class SqlBaseVisitorImplementation : SqlBaseVisitor<Any>() {
+class SqlBaseVisitorImplementation : SqlBaseVisitor<SqlNode>() {
 
-    override fun visitInsertStatement(ctx: SqlParser.InsertStatementContext): Any {
-        val table = visit(ctx.table()) as String
-        val values = ctx.value().map { visit(it) }.toTypedArray()
+    override fun visitInsertStatement(ctx: SqlParser.InsertStatementContext): SqlNode {
+        val table = visit(ctx.table()) as Table
+        val values = ctx.value().map { visit(it) as Any }.toTypedArray()
 
-        return InsertNode(
+        return SqlInsertNode(
                 table,
                 listOf(values)
         )
     }
 
-    override fun visitSelectStatement(ctx: SqlParser.SelectStatementContext): Any {
-        val resultColumns = ctx.resultColumn().map { visit(it) as String }
-        val from = visit(ctx.from()) as String
-        return SelectNode(
+    override fun visitSelectStatement(ctx: SqlParser.SelectStatementContext): SqlNode {
+        val resultColumns = ctx.resultColumn().map { visit(it) as AnyValue }.map { it.value }
+        val from = visit(ctx.from()) as From
+        return SqlSelectNode(
                 resultColumns,
                 from
         )
     }
 
-    override fun visitValue(ctx: SqlParser.ValueContext): Any {
-        if (ctx.BOOLEAN_LITERAL() != null) return ctx.BOOLEAN_LITERAL().symbol.text.toBoolean()
-        if (ctx.STRING_LITERAL() != null) return ctx.STRING_LITERAL().symbol.text.drop(1).dropLast(1)
-        if (ctx.NUMERIC_LITERAL() != null) return ctx.NUMERIC_LITERAL().symbol.text.toFloat()
-        return Any()
+    override fun visitValue(ctx: SqlParser.ValueContext): SqlNode {
+        if (ctx.BOOLEAN_LITERAL() != null) return ctx.BOOLEAN_LITERAL().symbol.text.toBoolean().let { ValueLiteral(it) }
+        if (ctx.STRING_LITERAL() != null) return ctx.STRING_LITERAL().symbol.text.drop(1).dropLast(1).let { ValueLiteral(it) }
+        if (ctx.NUMERIC_LITERAL() != null) return ctx.NUMERIC_LITERAL().symbol.text.toFloat().let { ValueLiteral(it) }
+        throw Exception("Unexpected value")
     }
 
-    override fun visitTable(ctx: SqlParser.TableContext): Any {
-        return visit(ctx.anyName())
+    override fun visitTable(ctx: SqlParser.TableContext): SqlNode {
+        return Table(ctx.IDENTIFIER().text)
     }
 
-    override fun visitFrom(ctx: SqlParser.FromContext): Any {
-        return visit(ctx.anyName())
+    override fun visitFrom(ctx: SqlParser.FromContext): SqlNode {
+        return From(ctx.IDENTIFIER().text)
     }
 
-    override fun visitResultColumn(ctx: SqlParser.ResultColumnContext): Any {
+    override fun visitResultColumn(ctx: SqlParser.ResultColumnContext): SqlNode {
         if (ctx.ASTERISK() != null) {
-            return ctx.ASTERISK().symbol.text
+            return AnyValue(ctx.ASTERISK().symbol.text)
         }
 
         return visit(ctx.anyName())
     }
 
-    override fun visitAnyName(ctx: SqlParser.AnyNameContext): Any {
+    override fun visitAnyName(ctx: SqlParser.AnyNameContext): SqlNode {
         if (ctx.anyName() != null) {
             return visit(ctx.anyName())
         }
-        return ctx.IDENTIFIER().symbol.text
+
+        return AnyValue(ctx.IDENTIFIER().text)
     }
 }

@@ -4,17 +4,21 @@ import com.tw.dbserver.db.catalog.Catalog
 import com.tw.dbserver.db.catalog.Column
 import com.tw.dbserver.db.catalog.ColumnType
 import com.tw.dbserver.db.catalog.TableInfo
+import com.tw.dbserver.db.execution.ExecutionPlanCreator
 import com.tw.dbserver.db.execution.Row
+import com.tw.dbserver.db.logicalplan.SqlToRelConverter
 import com.tw.dbserver.db.parser.QueryParser
-import com.tw.dbserver.db.planner.QueryPlanner
+import com.tw.dbserver.db.parser.ast.SqlStatement
 import com.tw.dbserver.db.storage.StorageManager
 
 class QueryOrchestrator(private val queryParser: QueryParser,
-                        private val queryPlanner: QueryPlanner) {
+                        private val executionPlanCreator: ExecutionPlanCreator,
+                        private val sqlToRelConverter: SqlToRelConverter) {
 
     fun run(query: String): List<Row> {
         val parsedQuery = queryParser.parse(query)
-        val operator = queryPlanner.plan(parsedQuery)
+        val logicalPlan = sqlToRelConverter.convert(parsedQuery as SqlStatement) // TODO: zmienić
+        val operator = executionPlanCreator.materialize(logicalPlan)
         return operator.toList()
     }
 }
@@ -30,15 +34,16 @@ fun main() {
                     Column("colBoolean", ColumnType.BOOLEAN),
                     Column("colFloat", ColumnType.FLOAT),
 
-            )
+                    )
     )
     catalog.putTableInfo("table", tableInfo)
     val queryOrchestrator = QueryOrchestrator(
             QueryParser(),
-            QueryPlanner(
+            ExecutionPlanCreator(
                     storageManager,
                     catalog
-            )
+            ),
+            SqlToRelConverter(catalog)
     )
     val result = queryOrchestrator.run("SELECT * FROM table")
 

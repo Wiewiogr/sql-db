@@ -2,20 +2,18 @@ package com.tw.dbserver.db.parser
 
 import SqlLexer
 import SqlParser
-import com.tw.dbserver.db.parser.nodes.SelectNode
+import com.tw.dbserver.db.parser.ast.SqlNode
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 
 class QueryParser {
 
-    fun parse(sqlQuery: String): SelectNode {
+    fun parse(sqlQuery: String): SqlNode { // TODO: niech zwraca AST
         val lexer = SqlLexer(CharStreams.fromString(sqlQuery))
         val tokens = CommonTokenStream(lexer)
         val parser = SqlParser(tokens)
         val expression = parser.statement()
-        val query = SqlBaseVisitorImplementation().visit(expression)
-        println(query)
-        return query as SelectNode
+        return SqlBaseVisitorImplementation().visit(expression)
     }
 }
 

@@ -12,8 +12,8 @@ resultColumn
   : anyName
   | ASTERISK
   ;
-from: anyName;
-table: anyName;
+from: IDENTIFIER;
+table: IDENTIFIER;
 
 value
   : NUMERIC_LITERAL

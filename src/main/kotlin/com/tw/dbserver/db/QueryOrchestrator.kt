@@ -5,7 +5,7 @@ import com.tw.dbserver.db.catalog.Column
 import com.tw.dbserver.db.catalog.ColumnType
 import com.tw.dbserver.db.catalog.TableInfo
 import com.tw.dbserver.db.execution.ExecutionPlanCreator
-import com.tw.dbserver.db.execution.Row
+import com.tw.dbserver.db.execution.operators.Row
 import com.tw.dbserver.db.logicalplan.SqlToRelConverter
 import com.tw.dbserver.db.parser.QueryParser
 import com.tw.dbserver.db.parser.ast.SqlStatement
@@ -45,6 +45,8 @@ fun main() {
             ),
             SqlToRelConverter(catalog)
     )
+    queryOrchestrator.run("INSERT INTO table VALUES(1, 12, false, 10.0123)").forEach { println(it) }
+    queryOrchestrator.run("INSERT INTO table VALUES (13, 142, true, 213.86)").forEach { println(it) }
     val result = queryOrchestrator.run("SELECT * FROM table")
 
     result.forEach { row ->

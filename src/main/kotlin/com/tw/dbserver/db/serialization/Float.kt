@@ -7,6 +7,10 @@ class FloatSerializer : Serializer<Float> {
         byteBuffer.putFloat(value)
     }
 
+    override fun recordSize(value: Float): Int = 4
+}
+
+class FloatDeserializer : Deserializer<Float> {
     override fun read(byteBuffer: ByteBuffer): Float {
         return byteBuffer.getFloat()
     }

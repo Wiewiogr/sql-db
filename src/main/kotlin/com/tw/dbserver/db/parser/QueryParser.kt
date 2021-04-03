@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.CommonTokenStream
 
 class QueryParser {
 
-    fun parse(sqlQuery: String): SqlNode { // TODO: niech zwraca AST
+    fun parse(sqlQuery: String): SqlNode {
         val lexer = SqlLexer(CharStreams.fromString(sqlQuery))
         val tokens = CommonTokenStream(lexer)
         val parser = SqlParser(tokens)

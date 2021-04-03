@@ -1,8 +1,6 @@
-package com.tw.dbserver.db.execution.accessmethods
+package com.tw.dbserver.db.execution.operators
 
 import com.tw.dbserver.db.catalog.TableInfo
-import com.tw.dbserver.db.execution.Operator
-import com.tw.dbserver.db.execution.Row
 import com.tw.dbserver.db.storage.KeyValueRecord
 
 class ScanOperator(private val data: Sequence<KeyValueRecord>,
@@ -17,10 +15,10 @@ class ScanOperator(private val data: Sequence<KeyValueRecord>,
             data.forEach { (key, value) ->
                 val row = Row(numberOfColumns) {
                     if (it == 0) {
-                        val read = keyColumn.type.serializer.read(key)
+                        val read = keyColumn.type.deserializer.read(key)
                         read
                     } else {
-                        columns[it - 1].type.serializer.read(value)
+                        columns[it - 1].type.deserializer.read(value)
                     }
                 }
 

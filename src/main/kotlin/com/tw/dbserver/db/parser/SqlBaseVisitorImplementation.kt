@@ -8,7 +8,7 @@ class SqlBaseVisitorImplementation : SqlBaseVisitor<SqlNode>() {
 
     override fun visitInsertStatement(ctx: SqlParser.InsertStatementContext): SqlNode {
         val table = visit(ctx.table()) as Table
-        val values = ctx.value().map { visit(it) as Any }.toTypedArray()
+        val values = ctx.value().map { visit(it) as ValueLiteral<Any>}.toTypedArray()
 
         return SqlInsertNode(
                 table,

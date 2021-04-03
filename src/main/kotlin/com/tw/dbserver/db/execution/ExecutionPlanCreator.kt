@@ -1,6 +1,7 @@
 package com.tw.dbserver.db.execution
 
 import com.tw.dbserver.db.catalog.Catalog
+import com.tw.dbserver.db.execution.operators.Operator
 import com.tw.dbserver.db.logicalplan.nodes.RelNode
 import com.tw.dbserver.db.storage.StorageManager
 

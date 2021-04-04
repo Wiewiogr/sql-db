@@ -47,10 +47,17 @@ fun main() {
     )
     queryOrchestrator.run("INSERT INTO table VALUES(1, 12, false, 10.0123)").forEach { println(it) }
     queryOrchestrator.run("INSERT INTO table VALUES (13, 142, true, 213.86)").forEach { println(it) }
-    val result = queryOrchestrator.run("SELECT * FROM table")
+    printResults(queryOrchestrator.run("SELECT * FROM table"))
+    println("kolejne query")
+    printResults(queryOrchestrator.run("SELECT colFloat, colBoolean FROM table"))
+    println("kolejne query")
+}
 
+private fun printResults(result: List<Row>) {
     result.forEach { row ->
         row.forEach { value -> print("$value, ") }
         println()
     }
 }
+
+

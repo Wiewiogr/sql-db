@@ -8,7 +8,7 @@ class SqlBaseVisitorImplementation : SqlBaseVisitor<SqlNode>() {
 
     override fun visitInsertStatement(ctx: SqlParser.InsertStatementContext): SqlNode {
         val table = visit(ctx.table()) as Table
-        val values = ctx.value().map { visit(it) as ValueLiteral<Any>}.toTypedArray()
+        val values = ctx.value().map { visit(it) as ValueLiteral<Any> }.toTypedArray()
 
         return SqlInsertNode(
                 table,
@@ -17,7 +17,7 @@ class SqlBaseVisitorImplementation : SqlBaseVisitor<SqlNode>() {
     }
 
     override fun visitSelectStatement(ctx: SqlParser.SelectStatementContext): SqlNode {
-        val resultColumns = ctx.resultColumn().map { visit(it) as AnyValue }.map { it.value }
+        val resultColumns = ctx.resultColumn().map { visit(it) as SqlResultColumn }
         val from = visit(ctx.from()) as From
         return SqlSelectNode(
                 resultColumns,
@@ -33,26 +33,34 @@ class SqlBaseVisitorImplementation : SqlBaseVisitor<SqlNode>() {
     }
 
     override fun visitTable(ctx: SqlParser.TableContext): SqlNode {
-        return Table(ctx.IDENTIFIER().text)
+        return Table(parseIdentifier(ctx.identifier()))
     }
 
     override fun visitFrom(ctx: SqlParser.FromContext): SqlNode {
-        return From(ctx.IDENTIFIER().text)
+        return From(parseIdentifier(ctx.identifier()))
     }
 
     override fun visitResultColumn(ctx: SqlParser.ResultColumnContext): SqlNode {
         if (ctx.ASTERISK() != null) {
-            return AnyValue(ctx.ASTERISK().symbol.text)
+            return SqlResultColumn(AllColumnsExpression(), null)
         }
 
-        return visit(ctx.anyName())
+        return SqlResultColumn(visit(ctx.expression()) as Expression, null)
     }
 
-    override fun visitAnyName(ctx: SqlParser.AnyNameContext): SqlNode {
-        if (ctx.anyName() != null) {
-            return visit(ctx.anyName())
+    override fun visitColumnReference(ctx: SqlParser.ColumnReferenceContext): SqlNode {
+        val identifier = ctx.identifier()
+        return ColumnNameExpression(parseIdentifier(identifier))
+    }
+
+    override fun visitIdentifier(ctx: SqlParser.IdentifierContext): SqlNode {
+        if (ctx.identifier() != null) {
+            return visit(ctx.identifier())
         }
 
         return AnyValue(ctx.IDENTIFIER().text)
     }
+
+    private fun parseIdentifier(identifier: SqlParser.IdentifierContext?) =
+            visit(identifier).let { it as AnyValue }.value
 }

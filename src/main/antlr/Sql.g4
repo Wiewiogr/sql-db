@@ -9,11 +9,16 @@ selectStatement: SELECT resultColumn (',' resultColumn)* FROM from;
 insertStatement: INSERT INTO table VALUES '(' value (',' value )* ')';
 
 resultColumn
-  : anyName
+  : expression
   | ASTERISK
   ;
-from: IDENTIFIER;
-table: IDENTIFIER;
+
+expression
+  : identifier #columnReference
+  ;
+
+from: identifier;
+table: identifier;
 
 value
   : NUMERIC_LITERAL
@@ -21,9 +26,9 @@ value
   | BOOLEAN_LITERAL
   ;
 
-anyName
+identifier
   : IDENTIFIER
-  | '(' anyName ')'
+  | '(' identifier ')'
   ;
 
 ASTERISK: '*';
